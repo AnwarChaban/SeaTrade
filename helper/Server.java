@@ -1,5 +1,7 @@
+import java.io.*;
+import java.net.*;
+
 class Server implements Runnable {
-   int port;
 
    Server(port) {
 	this.port = port;	
