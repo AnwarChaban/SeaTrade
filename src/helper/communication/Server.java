@@ -2,10 +2,11 @@ import java.io.*;
 import java.net.*;
 
 class Server implements Runnable {
+    private int port;
 
-   Server(port) {
-	this.port = port;	
-   }
+    public Server(int port) {
+    	this.port = port;	
+    }
 
     @Override
     public void run() {
