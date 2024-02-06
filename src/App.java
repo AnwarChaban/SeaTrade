@@ -1,5 +1,8 @@
+import object.*;
+
 public class App {
     public static void main(String[] args) throws Exception {
-        System.out.println("Hello, World!");
+        new Ship("ship", "company").instantiate();
+        System.out.println("New Ship instance!");
     }
 }
