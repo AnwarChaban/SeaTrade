@@ -5,9 +5,9 @@ import java.sql.SQLException;
 public class SqlConnection {
     public static void main(String[] args) {
         // Database credentials
-        String url = "jdbc:mysql://localhost:3306/mydatabase";
+        String url = "jdbc:mysql://localhost:3306/seatrade";
         String username = "root";
-        String password = "password";
+        String password = "";
 
         // Establishing the connection
         try {
