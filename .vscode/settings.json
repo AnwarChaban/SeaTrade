@@ -1,0 +1,7 @@
+{
+    "java.project.sourcePaths": [
+        "bin",
+        "src/helper"
+    ],
+    "java.project.outputPath": "src"
+}
