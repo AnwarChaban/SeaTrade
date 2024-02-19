@@ -2,44 +2,34 @@ package object;
 
 import helper.communication.*;
 import java.io.IOException;
+import java.util.*;
 
 public class Company {
     String name;
-    String harbour;
-    int deposit;
-    Client client = new Client(8150, "localhost");
+    ArrayList<Ship> shipList = new ArrayList<Ship>();
 
     public Company(String name) {
         this.name = name;
     }
 
     public void instantiate() {
-        new Thread(client).run();
+        // connect to seaTrade server
+        Client seaTrade = new Client(8150, "localhost");
+        new Thread(seaTrade).run();
+        
 
         try {
-            client.send(String.format("register:%s", this.name));
-            String depositText = client.receive();
-            String deposits[] = depositText.split(":");
-            this.deposit = Integer.parseInt(deposits[2]);
-            System.out.println("Server: " + depositText);
-            
-            client.stop();
+            seaTrade.send(String.format("register:%s", this.name));
+            System.out.println("Server: " + seaTrade.receive());
+            instantiateShip("ship1");
+            seaTrade.stop();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    
-    public void getInfo() {
-        try {
-            client.send("getinfo:harbour");
-            System.out.println("Server: " + client.receive());
-            String deposit = client.receive();
-            String deposits[] = deposit.split(":");
-            System.out.println("testtttt: " + deposits[1]);
-            
-            client.stop();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+    private void instantiateShip(String shipName) {
+        Ship ship = new Ship(shipName, this.name).instantiate("plymouth");
+        shipList.add(ship);
     }
 }
