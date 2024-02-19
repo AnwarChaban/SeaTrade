@@ -12,15 +12,15 @@ public class Ship {
         this.company = company;
     }
 
-    public void instantiate() {
+    public void instantiate(String harbour) {
         Client client = new Client(8151, "localhost");
         new Thread(client).run();
         
         try {
-            client.send("Hello, Server!");
+            client.send(String.format("launch:%s:%s:%s", this.company, harbour, this.name));
             System.out.println("Server says: " + client.receive());
 
-            client.stop();
+//            client.stop();
         } catch (IOException e) {
             e.printStackTrace();
         }
