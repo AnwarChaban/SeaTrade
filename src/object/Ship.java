@@ -17,7 +17,7 @@ public class Ship {
         new Thread(client).run();
         
         try {
-            client.send("Hello, Server!");
+            client.send("launch:" + company + ":plymouth:" + name);
             System.out.println("Server says: " + client.receive());
 
             client.stop();
