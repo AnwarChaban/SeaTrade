@@ -30,8 +30,14 @@ public class Company {
             this.id = genarateId();
             this.deposit = Integer.parseInt(deposits[2]); // Convert string to int
             db.setCompany(this.id, this.name, Integer.toString(this.deposit));
-            // instantiateShip("ship1");
-            System.out.println("Server: " + seaTrade.receive());
+
+            for (int i = 0; i < 10; i++) {
+                seaTrade.send("getinfo:harbour");
+                Harbor harbour = new Harbor().instantiate(seaTrade.receive());
+                db.setHabor(harbour.id, harbour.name, harbour.coordinate);
+                System.out.println("Server: " + seaTrade.receive());
+            }
+            instantiateShip("ship1");
             seaTrade.stop();
         } catch (IOException e) {
             e.printStackTrace();

@@ -23,7 +23,6 @@ public class Datenbank {
     }
 
     public void setCompany(String compnayId, String companyName, String deposit) throws SQLException {
-        
         String insertQuery = "INSERT IGNORE INTO company (ID,CompanyName,Guthaben) VALUES (?, ?, ?)";
         PreparedStatement statement = connection.prepareStatement(insertQuery);
             
@@ -34,7 +33,18 @@ public class Datenbank {
             statement.setString(3, deposit);
             statement.executeUpdate();
         }
-        System.out.println("Company inserted!");
+    }
+    public void setHabor(String haborId, String haborName, String position) throws SQLException {
+        String insertQuery = "INSERT IGNORE INTO Hafen (ID,HafenName,Koordinaten) VALUES (?, ?, ?)";
+        PreparedStatement statement = connection.prepareStatement(insertQuery);
+            
+
+        if (!haborId.equals("null")) {
+            statement.setString(1, haborId);
+            statement.setString(2, haborName);
+            statement.setString(3, position);
+            statement.executeUpdate();
+        }
     }
 }
  
