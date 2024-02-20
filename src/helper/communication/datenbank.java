@@ -12,6 +12,7 @@ public class datenbank {
 
     public void execQuery() {
         // TODO: Implement execQuery method
+        //
     }
 
     public void execStatement() {

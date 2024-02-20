@@ -9,7 +9,7 @@ public class SqlConnection {
         String username = "root";
         String password = "";
 
-        // Establishing the connection
+       
         try {
             Connection connection = DriverManager.getConnection(url, username, password);
             System.out.println("Connected to the database!");
