@@ -3,5 +3,9 @@
         "bin",
         "src/helper"
     ],
-    "java.project.outputPath": "src"
+    "java.project.outputPath": "src",
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "c:\\Users\\Anwar Chaban\\Downloads\\mysql-connector-java-5.1.34-bin.jar"
+    ]
 }
