@@ -20,6 +20,13 @@ public class Hafen {
     public int getReservedCargoCount() {
         // Add your implementation here
     }
+    public void setReservedCargoCount(int reservedCargoCount) {
+        this.reservedCargoCount = reservedCargoCount;
+    }
+
+    public int getReservedCargoCount() {
+        return reservedCargoCount;
+    }
 
     public void setReservedCargoCount(int reservedCargoCount) {
         // Add your implementation here
