@@ -34,15 +34,14 @@ public class Datenbank {
             statement.executeUpdate();
         }
     }
-    public void setHabor(String haborId, String haborName, String position) throws SQLException {
-        String insertQuery = "INSERT IGNORE INTO Hafen (ID,HafenName,Koordinaten) VALUES (?, ?, ?)";
+    public void setHabor(String haborName, String position) throws SQLException {
+        String insertQuery = "INSERT IGNORE INTO Hafen (HafenName, Koordinaten) VALUES (?, ?)";
         PreparedStatement statement = connection.prepareStatement(insertQuery);
             
 
-        if (!haborId.equals("null")) {
-            statement.setString(1, haborId);
-            statement.setString(2, haborName);
-            statement.setString(3, position);
+        if (!haborName.equals("null")) {
+           statement.setString(1, haborName);
+            statement.setString(2, position);
             statement.executeUpdate();
         }
     }

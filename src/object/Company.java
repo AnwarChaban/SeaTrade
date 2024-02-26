@@ -33,9 +33,10 @@ public class Company {
 
             for (int i = 0; i < 10; i++) {
                 seaTrade.send("getinfo:harbour");
-                Harbor harbour = new Harbor().instantiate(seaTrade.receive());
-                db.setHabor(harbour.id, harbour.name, harbour.coordinate);
-                System.out.println("Server: " + seaTrade.receive());
+                String harbourName = seaTrade.receive();
+                Harbor harbour = new Harbor().instantiate(harbourName);
+                db.setHabor(harbour.name, harbour.coordinate);
+                System.out.println("Server: " + harbourName);
             }
             instantiateShip("ship1");
             seaTrade.stop();
