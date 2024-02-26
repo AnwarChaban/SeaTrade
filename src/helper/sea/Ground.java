@@ -1,4 +1,4 @@
-package sea;
+package helper.sea;
 
 // Untergrund-Aufzaehlung
 

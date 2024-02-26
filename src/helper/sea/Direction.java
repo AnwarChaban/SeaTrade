@@ -1,4 +1,4 @@
-package sea;
+package helper.sea;
 
 // Fahrtrichtung des Schiffs 
 

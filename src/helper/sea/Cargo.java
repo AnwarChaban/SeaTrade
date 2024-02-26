@@ -1,7 +1,7 @@
-package sea;
+package helper.sea;
 
-import sea.Direction;
-import sea.Position;
+import helper.sea.Direction;
+import helper.sea.Position;
 
 public class Cargo {
 

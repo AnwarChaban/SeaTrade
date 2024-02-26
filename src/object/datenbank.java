@@ -1,4 +1,4 @@
-package communication;
+package object;
 
 import java.sql.Connection;
 

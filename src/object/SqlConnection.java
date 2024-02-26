@@ -1,3 +1,4 @@
+package object;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -5,7 +6,7 @@ import java.sql.SQLException;
 public class SqlConnection {
     public static void main(String[] args) {
         // Database credentials
-        String url = "jdbc:mysql://localhost:3306/seatrade";
+        String url = "jdbc:mysql://localhost:3306/helper.seatrade";
         String username = "root";
         String password = "";
 

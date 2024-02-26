@@ -1,4 +1,4 @@
-package sea;
+package helper.sea;
 
 public class RadarField {
 	private Ground ground;
