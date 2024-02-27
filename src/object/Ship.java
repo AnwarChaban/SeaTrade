@@ -12,17 +12,22 @@ public class Ship {
         this.company = company;
     }
 
-    public void instantiate() {
+    public Ship instantiate(String harbour) {
         Client client = new Client(8151, "localhost");
         new Thread(client).run();
         
         try {
-            client.send("Hello, Server!");
-            System.out.println("Server says: " + client.receive());
+            client.send(String.format("launch:%s:%s:%s", this.company, harbour, this.name));
+            System.out.println("Ship launched: " + client.receive());
 
-            client.stop();
+            client.send("radarrequest");
+            System.out.println("radar infos: " + client.receive());
+
+            return this;
+//            client.stop();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return null;
     }
 }
