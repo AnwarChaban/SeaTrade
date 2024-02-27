@@ -43,11 +43,27 @@ public class Ship {
         toSeaTrade.send("radarrequest");
         String[] tokens = toSeaTrade.receive().split(":");
         RadarScreen radarScreen = RadarScreen.parse(tokens[1]);
-        RadarField[] radarField = radarScreen.getMeasures();
+        RadarField[] radarFields = radarScreen.getMeasures();
 
         // radarFields is a List containing information about each block around the ship
         // when using RadarField.parse() you can pass in an item out of this list...
         // ...it tells you wether the given Block is free or not
-        System.out.println(Arrays.toString(radarField));
+        System.out.println(Arrays.toString(radarFields));
+        
+        // map enum values to radarField values
+        // rerun the loop if no free block was found ()
+        for (int i = 0; i < radarFields.length; i += 2) {
+              // find the first free block on the radar
+            if (radarFields[i].getGround() == Ground.WASSER && !radarFields[i].isHasShip()) {
+                System.out.println(radarFields[i].getGround());
+            }
+        }
+        // for (RadarField radarField : radarFields) {
+        //      // find the first free block on the radar
+        //     if (radarField.getGround() == Ground.WASSER && !radarField.isHasShip()) {
+        //         System.out.println(radarField.toString());
+        //     }
+        // }
+        // System.out.println(directions); 
     }
 }
