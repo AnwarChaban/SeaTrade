@@ -45,5 +45,19 @@ public class Datenbank {
             statement.executeUpdate();
         }
     }
+    public void setCargo(String cargoId, int value,boolean IsAvailable ,String source, String destination) throws SQLException {
+        String insertQuery = "INSERT IGNORE INTO ladungen (ID, Wert, IsAvailablle, StartHafen, ZielHafen) VALUES (?, ?, ?, ?, ?)";
+        PreparedStatement statement = connection.prepareStatement(insertQuery);
+            
+
+        if (!cargoId.equals("null")) {
+           statement.setString(1, cargoId);
+           statement.setInt(2, value);
+           statement.setBoolean(3, IsAvailable);
+           statement.setString(4, source);
+            statement.setString(5, destination);
+            statement.executeUpdate();
+        }
+    }
 }
  

@@ -26,7 +26,7 @@ public class Cargo {
 		this.id = (int)(Math.random()*1000)+1;
 	}
 	
-	public int getId() {
+	public int getId() { 
 		return id;
 	}
 

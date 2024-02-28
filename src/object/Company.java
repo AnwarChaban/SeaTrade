@@ -16,7 +16,7 @@ public class Company {
         this.name = name;
     }
 
-    public void instantiate() throws SQLException {
+    public void instantiate() throws SQLException, InterruptedException {
         // connect to seaTrade server
         Client seaTrade = new Client(8150, "localhost");
         db = new Datenbank();
@@ -31,17 +31,38 @@ public class Company {
             this.deposit = Integer.parseInt(deposits[2]); // Convert string to int
             db.setCompany(this.id, this.name, Integer.toString(this.deposit));
 
-            for (int i = 0; i < 10; i++) {
-                seaTrade.send("getinfo:harbour");
-                String harbourName = seaTrade.receive();
-                Harbor harbour = new Harbor().instantiate(harbourName);
-                db.setHabor(harbour.name, harbour.coordinate);
-                System.out.println("Server: " + harbourName);
-            }
-            instantiateShip("ship1");
+            setHarbour(seaTrade);
+            setCargo(seaTrade);
+            
+            // instantiateShip("ship1");
             seaTrade.stop();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void setHarbour(Client seaTrade) throws IOException, SQLException, InterruptedException {
+        String harbourName = "";
+        seaTrade.send("getinfo:harbour");
+        while (!harbourName.equals("endinfo")) {
+            harbourName = seaTrade.receive();
+            if (!harbourName.equals("endinfo")) {
+                Harbor harbour = new Harbor().instantiate(harbourName);
+                db.setHabor(harbour.name, harbour.coordinate);
+            }
+            System.out.println("Server: " + harbourName);
+        }
+    }
+    private void setCargo(Client seaTrade) throws IOException, SQLException, InterruptedException {
+        String cargoName = "";
+        seaTrade.send("getinfo:cargo");
+        while (!cargoName.equals("endinfo")) {
+            cargoName = seaTrade.receive();
+            if (!cargoName.equals("endinfo")) {
+                CustomCargo cargo = new CustomCargo().instantiate(cargoName);
+                db.setCargo(cargo.getId(),cargo.value,true,cargo.source, cargo.destination);
+            }
+            System.out.println("Server: " + cargoName);
         }
     }
 
@@ -53,5 +74,9 @@ public class Company {
     private String genarateId() {
         UUID uuid = UUID.randomUUID();
         return uuid.toString();
+    }
+
+    public String getId() {
+        return "sdadadsasdadasdadad";
     }
 }
