@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Page Title</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
+</head>
+<body>
+
+    <h1>Company</h1>
+    <action="http://localhost:8080/" method="get" id="companyForm">
+        <p>Company Name: <input type="text" id="companyName"></p>
+        <input type="submit" value="Submit">
+    </form>
+
+    
+    <script>
+        fetch('http://localhost:80/CompanyServlet')
+        .then(response => response.text())
+        .then(data => {
+            // Use the data returned from the Java function
+            console.log(data);
+        });
+    </script>
+</body>
+</html>
