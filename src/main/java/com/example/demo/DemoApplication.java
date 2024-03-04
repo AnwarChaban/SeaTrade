@@ -30,6 +30,9 @@ public class DemoApplication {
 			System.out.println("An error occurred while trying to open the HTML file: " + e.getMessage());
 		}
 		System.out.println("New Company instance!");
+
+		// Company company = new Company("test123");
+		// company.getShips("dsda");
 	}
 
 }

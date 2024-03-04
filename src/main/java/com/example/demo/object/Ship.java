@@ -2,11 +2,13 @@ package com.example.demo.object;
 
 import com.example.demo.helper.communication.*;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.*;
 import com.example.demo.sea.*;
 
 public class Ship {
     String name;
+    String id;
     String company;
     Client toSeaTrade;
 
@@ -36,6 +38,15 @@ public class Ship {
     private String registerShip(String harbour) throws IOException {
         toSeaTrade.send(String.format("launch:%s:%s:%s", this.company, harbour, this.name));
 
+        this.id = genarateId();
+        Datenbank db = new Datenbank();
+        try {
+            db.setShip(this.id,this.name, this.company, harbour);
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
         return toSeaTrade.receive();
     }
 
@@ -49,5 +60,9 @@ public class Ship {
         // when using RadarField.parse() you can pass in an item out of this list...
         // ...it tells you wether the given Block is free or not
         System.out.println(Arrays.toString(radarField));
+    }
+    private String genarateId() {
+        UUID uuid = UUID.randomUUID();
+        return uuid.toString();
     }
 }

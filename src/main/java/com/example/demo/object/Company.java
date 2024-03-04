@@ -34,7 +34,7 @@ public class Company {
             setHarbour(seaTrade);
             setCargo(seaTrade);
             
-            // instantiateShip("ship1");
+            instantiateShip("ship1");
             seaTrade.stop();
         } catch (IOException e) {
             e.printStackTrace();
@@ -53,6 +53,7 @@ public class Company {
             System.out.println("Server: " + harbourName);
         }
     }
+
     private void setCargo(Client seaTrade) throws IOException, SQLException, InterruptedException {
         String cargoName = "";
         seaTrade.send("getinfo:cargo");
@@ -60,10 +61,20 @@ public class Company {
             cargoName = seaTrade.receive();
             if (!cargoName.equals("endinfo")) {
                 CustomCargo cargo = new CustomCargo().instantiate(cargoName);
-                db.setCargo(cargo.getId(),cargo.value,true,cargo.source, cargo.destination);
+                db.setCargo(cargo.getId(), cargo.value, true, cargo.source, cargo.destination);
             }
             System.out.println("Server: " + cargoName);
         }
+    }
+    
+    public void addShip(String shipName) {
+        instantiateShip(shipName);
+    }
+
+    public Ship getShips(String companyName) throws SQLException {
+        db = new Datenbank();
+        db.getCompanys();
+        return null;
     }
 
     private void instantiateShip(String shipName) {
@@ -74,9 +85,5 @@ public class Company {
     private String genarateId() {
         UUID uuid = UUID.randomUUID();
         return uuid.toString();
-    }
-
-    public String getId() {
-        return "sdadadsasdadasdadad";
     }
 }
