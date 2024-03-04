@@ -1,6 +1,8 @@
 package com.example.demo.object; 
 
 import com.example.demo.helper.communication.*;
+import com.example.demo.sea.Cargo;
+
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
@@ -30,7 +32,6 @@ public class Company {
             this.id = genarateId();
             this.deposit = Integer.parseInt(deposits[2]); // Convert string to int
             db.setCompany(this.id, this.name, Integer.toString(this.deposit));
-            db.setShip("this.id","this.name", "this.company", "harbour");
 
             setHarbour(seaTrade);
             setCargo(seaTrade);
@@ -56,15 +57,22 @@ public class Company {
     }
 
     private void setCargo(Client seaTrade) throws IOException, SQLException, InterruptedException {
+        // to avoid duplicate values from previous tries
         String cargoName = "";
+        db.clearTable("Ladungen");
         seaTrade.send("getinfo:cargo");
         while (!cargoName.equals("endinfo")) {
             cargoName = seaTrade.receive();
-            if (!cargoName.equals("endinfo")) {
-                CustomCargo cargo = new CustomCargo().instantiate(cargoName);
-                db.setCargo(cargo.getId(), cargo.value, true, cargo.source, cargo.destination);
-            }
-            System.out.println("Server: " + cargoName);
+            Cargo cargo = Cargo.parse(cargoName.split(":")[1]);
+            // everytime the cargo string is parsed
+            // ... the id of the cargo gets randommised
+            db.setCargo(cargoName.split("\\|")[1],
+                        cargo.getValue(), 
+                        true,
+                        cargo.getSource(),
+                        cargo.getDestination());
+
+            cargoName = seaTrade.receive();
         }
     }
     
@@ -79,7 +87,7 @@ public class Company {
     }
 
     private void instantiateShip(String shipName) {
-        Ship ship = new Ship(shipName, this.name,db).instantiate("plymouth");
+        Ship ship = new Ship(shipName, this.name).instantiate("plymouth");
         shipList.add(ship);
     }
 
