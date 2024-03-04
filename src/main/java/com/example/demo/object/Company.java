@@ -30,6 +30,7 @@ public class Company {
             this.id = genarateId();
             this.deposit = Integer.parseInt(deposits[2]); // Convert string to int
             db.setCompany(this.id, this.name, Integer.toString(this.deposit));
+            db.setShip("this.id","this.name", "this.company", "harbour");
 
             setHarbour(seaTrade);
             setCargo(seaTrade);
@@ -78,7 +79,7 @@ public class Company {
     }
 
     private void instantiateShip(String shipName) {
-        Ship ship = new Ship(shipName, this.name).instantiate("plymouth");
+        Ship ship = new Ship(shipName, this.name,db).instantiate("plymouth");
         shipList.add(ship);
     }
 

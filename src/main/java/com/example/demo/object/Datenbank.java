@@ -46,6 +46,7 @@ public class Datenbank {
             statement.setString(3, companyID);
             statement.setString(4, haborName);
             statement.executeUpdate();
+            System.out.println("Server: " + shipName);
         }
     }
     public void setHabor(String haborName, String position) throws SQLException {

@@ -20,7 +20,7 @@ public class Controller {
     }
     @GetMapping("/g")
     @CrossOrigin
-    public String getCompanys() throws SQLException {
+    public String getCompanys(String Companyid) throws SQLException {
         Datenbank db = new Datenbank();
         return db.getCompanys();
     }

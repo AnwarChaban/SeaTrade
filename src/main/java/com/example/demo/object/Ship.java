@@ -11,10 +11,12 @@ public class Ship {
     String id;
     String company;
     Client toSeaTrade;
+    private Datenbank db;
 
-    public Ship(String name, String company) {
+    public Ship(String name, String company, Datenbank db) {
         this.name = name;
         this.company = company;
+        this.db = db;
     }
 
     public Ship instantiate(String harbour) {
@@ -39,7 +41,6 @@ public class Ship {
         toSeaTrade.send(String.format("launch:%s:%s:%s", this.company, harbour, this.name));
 
         this.id = genarateId();
-        Datenbank db = new Datenbank();
         try {
             db.setShip(this.id,this.name, this.company, harbour);
         } catch (SQLException e) {
