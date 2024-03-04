@@ -1,4 +1,4 @@
-package helper.sea;
+package sea;
 
 // Richtung umgebender Felder 
 

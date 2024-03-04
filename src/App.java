@@ -2,7 +2,7 @@ import object.*;
 
 public class App {
     public static void main(String[] args) throws Exception {
-        new Company("test1").instantiate();
+        new Company("Miro").instantiate();
         System.out.println("New Company instance!");
 
         // new Ship("test2", "test").instantiate();
