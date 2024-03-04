@@ -10,19 +10,28 @@
 <body>
 
     <h1>Company</h1>
-    <action="http://localhost:8080/" method="get" id="companyForm">
+    
+    <form action="http://localhost:8081/greeting" method="get" id="companyForm">
         <p>Company Name: <input type="text" id="companyName"></p>
+        
         <input type="submit" value="Submit">
     </form>
-
+    <button onclick = "fetchAsync('http://localhost:8081/greeting')" > Click Me </button>
     
     <script>
-        fetch('http://localhost:80/CompanyServlet')
-        .then(response => response.text())
-        .then(data => {
-            // Use the data returned from the Java function
-            console.log(data);
-        });
+        async function fetchAsync (url) {
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", url);
+            xhr.send();
+            xhr.onload = () => {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    const data = xhr.response;
+                    console.log(data);
+                } else {
+                    console.log('"Error: ${xhr.status}');
+                }
+            };
+        }
     </script>
 </body>
 </html>
