@@ -18,11 +18,17 @@ public class Controller {
         System.out.println("Hello World!");
         return "Greetings from Spring Boot!";
     }
-    @GetMapping("/g")
+    @GetMapping("/j")
     @CrossOrigin
     public String getCompanys() throws SQLException {
         Datenbank db = new Datenbank();
         return db.getCompanys();
     }
-
+    // gwt ships
+    @GetMapping("/s")
+    @CrossOrigin
+    public String getShips(String companyId) throws SQLException {
+        Datenbank db = new Datenbank();
+        return db.getShips(companyId);
+    }
 }

@@ -16,19 +16,25 @@
         
         <input type="submit" value="Submit">
     </form>
-    <button onclick = "fetchAsync('http://localhost:8081/g')" > Click Me </button>
+    <button onclick = "fetchAsync('http://localhost:8081/s','companyId=d78ad097-84cc-4e43-8da7-9416f3e70720')" > Click Me </button>
     
     <script>
-        async function fetchAsync (url) {
+        async function fetchAsync (url, params) {
+            // Convert the parameters into URL format
+            const urlParams = new URLSearchParams(params).toString();
+
+            // Append the parameters to the URL
+            const fullUrl = `${url}?${urlParams}`;
+
             const xhr = new XMLHttpRequest();
-            xhr.open("GET", url);
+            xhr.open("GET", fullUrl);
             xhr.send();
             xhr.onload = () => {
                 if (xhr.readyState == 4 && xhr.status == 200) {
                     const data = xhr.response;
                     console.log(data);
                 } else {
-                    console.log('"Error: ${xhr.status}');
+                    console.log(`Error: ${xhr.status}`);
                 }
             };
         }

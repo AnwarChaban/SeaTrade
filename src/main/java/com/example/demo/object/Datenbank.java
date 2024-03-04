@@ -96,7 +96,7 @@ public class Datenbank {
         }
 
     
-    public void getShips(String companyID) throws SQLException {
+    public String getShips(String companyID) throws SQLException {
         String shipsQuery = "SELECT * FROM schiffe WHERE CompanyID = ?";
         PreparedStatement statement = connection.prepareStatement(shipsQuery);
         statement.setString(1, companyID);
@@ -111,6 +111,7 @@ public class Datenbank {
             System.out.println(
                     "ID: " + id + ", Ship Name: " + shipName + ", Company ID: " + company + ", Cargo: " + hafenName);
         }
+        return shipsQuery;
     }
 }
  
