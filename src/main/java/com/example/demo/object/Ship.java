@@ -1,13 +1,20 @@
 package com.example.demo.object; 
 
 import com.example.demo.helper.communication.*;
-import java.io.IOException;import com.example.demo.sea.*;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.UUID;
+
+import com.example.demo.sea.*;
 
 public class Ship {
     String name;
     String company;
+    String id;
     boolean isAvailable;
     Client toSeaTrade;
+    private Datenbank db;
 
     public Ship(String name, String company) {
         this.name = name;
@@ -19,13 +26,9 @@ public class Ship {
         new Thread(toSeaTrade).run();
         
         try {
-            toSeaTrade.send(String.format("launch:%s:%s:%s", this.company, harbour, this.name));
-            getCargoList();
-            // System.out.println("Ship launched: " + toSeaTrade.receive());
-
-            // toSeaTrade.send("radarrequest");
-            // System.out.println("radar infos: " + toSeaTrade.receive());
-
+       String[] tokens = registerShip(harbour).split(":");
+            // Position pos = Position.parse(tokens[1]);
+            System.out.println(Arrays.toString(tokens));
             // setRadar();
             return this;
            // client.stop();
@@ -37,7 +40,14 @@ public class Ship {
     
     private String registerShip(String harbour) throws IOException {
         toSeaTrade.send(String.format("launch:%s:%s:%s", this.company, harbour, this.name));
-
+        db = new Datenbank();
+        this.id = genarateId();
+        try {
+            db.setShip(this.id,this.name, this.company, harbour);
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         return toSeaTrade.receive();
     }
 
@@ -92,6 +102,10 @@ public class Ship {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+      private String genarateId() {
+        UUID uuid = UUID.randomUUID();
+        return uuid.toString();
     }
     // private void setRadar() throws IOException {
     //     toSeaTrade.send("radarrequest");

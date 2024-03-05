@@ -38,6 +38,7 @@ public class Company {
             
             instantiateShip("ship1");
             seaTrade.stop();
+            db.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -90,6 +91,7 @@ public class Company {
         Ship ship = new Ship(shipName, this.name).instantiate("plymouth");
         shipList.add(ship);
     }
+
 
     private String genarateId() {
         UUID uuid = UUID.randomUUID();

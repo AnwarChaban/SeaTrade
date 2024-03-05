@@ -11,21 +11,15 @@ import com.mysql.cj.jdbc.*;
 
 public class Datenbank {
     private Connection connection;
-    private String query;
 
     public Datenbank() {
-        // TODO: Implement constructor
         connection = new SqlConnection().getConnection();
     }
 
-    public void execQuery() {
-        // TODO: Implement execQuery method
-        //
+    public void close() throws SQLException {
+        connection.close();
     }
 
-    public void execStatement() {
-        // TODO: Implement execStatement method
-    }
 
     public void setCompany(String compnayId, String companyName, String deposit) throws SQLException {
         String insertQuery = "INSERT IGNORE INTO Company (ID,CompanyName,Guthaben) VALUES (?, ?, ?)";
