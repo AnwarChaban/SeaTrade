@@ -48,6 +48,7 @@ public class Datenbank {
         String insertQuery = "INSERT IGNORE INTO Schiffe (ID, SchiffName, CompanyID, HafenName) VALUES (?, ?, ?, ?)";
         PreparedStatement statement = connection.prepareStatement(insertQuery);
 
+        System.out.println("ID length: " + shipId.length());
         if (!shipId.equals("null")) {
             statement.setString(1, shipId);
             statement.setString(2, shipName);
@@ -56,6 +57,7 @@ public class Datenbank {
             statement.executeUpdate();
         }
     }
+
     public void setHabor(String haborName, String position) throws SQLException {
         String insertQuery = "INSERT IGNORE INTO Hafen (HafenName, Koordinaten) VALUES (?, ?)";
         PreparedStatement statement = connection.prepareStatement(insertQuery);
@@ -81,6 +83,33 @@ public class Datenbank {
             statement.setString(5, destination);
             statement.executeUpdate();
         }
+    }
+    
+    public String getRandomHarbour() throws SQLException {
+        String query = "SELECT HafenName FROM Hafen ORDER BY RAND() LIMIT 1";
+        PreparedStatement statement = connection.prepareStatement(query);
+        ResultSet result = statement.executeQuery();
+        StringBuilder output = new StringBuilder();
+
+        while (result.next()) {
+            output.append(result.getString("HafenName"));
+        }
+        
+        return output.toString();
+    }
+
+    public String getCompanyDeposit(String companyName) throws SQLException {
+        String query = "SELECT Guthaben FROM Company WHERE companyName = ?";
+        PreparedStatement statement = connection.prepareStatement(query);
+        statement.setString(1, companyName);
+        ResultSet result = statement.executeQuery();
+        StringBuilder output = new StringBuilder();
+
+        while (result.next()) {
+            output.append(result.getString("Guthaben"));
+        }
+        
+        return output.toString();
     }
 
     public void removeCargo(String id) throws SQLException {

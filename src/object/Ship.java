@@ -2,6 +2,7 @@ package object;
 
 import helper.communication.*;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.*;
 import sea.*;
 
@@ -10,44 +11,35 @@ public class Ship {
     String company;
     boolean isAvailable;
     Client toSeaTrade;
+    Datenbank db;
 
     public Ship(String name, String company) {
         this.name = name;
         this.company = company;
     }
 
-    public Ship instantiate(String harbour) {
+    public Ship instantiate(String startHarbour) {
         toSeaTrade = new Client(8151, "localhost");
         new Thread(toSeaTrade).run();
-        
+        db = new Datenbank();
         try {
-            toSeaTrade.send(String.format("launch:%s:%s:%s", this.company, harbour, this.name));
-            getCargoList();
-            // System.out.println("Ship launched: " + toSeaTrade.receive());
+            toSeaTrade.send(String.format("launch:%s:%s:%s", this.company, startHarbour, this.name));
 
-            // toSeaTrade.send("radarrequest");
-            // System.out.println("radar infos: " + toSeaTrade.receive());
-
-            // setRadar();
-            return this;
+            while (true) {
+                getRandomCargo();
+            }
            // client.stop();
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        } 
         return null;
     }
     
-    private String registerShip(String harbour) throws IOException {
-        toSeaTrade.send(String.format("launch:%s:%s:%s", this.company, harbour, this.name));
-
-        return toSeaTrade.receive();
-    }
-
     // get the List of cargos
-    private void getCargoList() {
-        Datenbank db = new Datenbank();
+    private void getRandomCargo() {
         try {
             // select a cargo out of this list
+            // TODO check if there is any cargo left
             String firstCargo = db.getCargos().split("\n")[0];
             // everytime the Cargo string gets parsed
             // it generates a new random id
@@ -78,7 +70,10 @@ public class Ship {
             // collect the money when the Ship arrives at the destination
             waitForArrival();
             toSeaTrade.send("unloadcargo");
-            System.out.println("UNLOAD CARGO: " + toSeaTrade.receive());
+
+            String cargoFee = toSeaTrade.receive().split(":")[1];
+            System.out.println("CARGO FEE: " + cargoFee);
+            isAvailable = true;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -95,37 +90,4 @@ public class Ship {
             e.printStackTrace();
         }
     }
-    // private void setRadar() throws IOException {
-    //     toSeaTrade.send("radarrequest");
-    //     String[] tokens = toSeaTrade.receive().split(":");
-    //     RadarScreen radarScreen = RadarScreen.parse(tokens[1]);
-    //     RadarField[] radarFields = radarScreen.getMeasures();
-    //
-    //     // radarFields is a List containing information about each block around the ship
-    //     // when using RadarField.parse() you can pass in an item out of this list...
-    //     // ...it tells you wether the given Block is free or not
-    //     System.out.println(Arrays.toString(radarFields));
-    //     
-    //     String[] directions = {"WEST", "NORTH", "EAST", "SOUTH"};
-    //
-    //     // map enum values to radarField values
-    //     // rerun the loop if no free block was found ()
-    //     for (int i = 0; i < radarFields.length; i += 2) {
-    //           // find the first free block on the radar
-    //         if (radarFields[i].getGround() == Ground.WASSER && !radarFields[i].isHasShip()) {
-    //             System.out.println("Ground: " + radarFields[i].getGround());
-    //             System.out.println("Direction: " + directions[i/2]);
-    //             System.out.println("move:" + directions[i/2]);
-    //             String foo = "moveto:brest";
-    //             toSeaTrade.send(foo);
-    //         }
-    //     }
-    //     // for (RadarField radarField : radarFields) {
-    //     //      // find the first free block on the radar
-    //     //     if (radarField.getGround() == Ground.WASSER && !radarField.isHasShip()) {
-    //     //         System.out.println(radarField.toString());
-    //     //     }
-    //     // }
-    //     // System.out.println(directions); 
-    // }
 }
