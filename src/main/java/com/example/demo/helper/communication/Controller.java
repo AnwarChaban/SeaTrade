@@ -4,7 +4,11 @@ import java.sql.SQLException;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+// import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import com.example.demo.object.Company;
 import com.example.demo.object.Datenbank;
@@ -18,14 +22,22 @@ public class Controller {
         System.out.println("Hello World!");
         return "Greetings from Spring Boot!";
     }
-    @GetMapping("/j")
+    @GetMapping("/getCompany")
     @CrossOrigin
     public String getCompanys() throws SQLException {
         Datenbank db = new Datenbank();
         return db.getCompanys();
     }
+    @PostMapping("/login")
+    @CrossOrigin
+    @ResponseBody
+    public String getCompanys(@RequestParam String companyName) throws SQLException, InterruptedException {
+
+        // new Company(companyName).instantiate();
+        return companyName;
+    }
     // gwt ships
-    @GetMapping("/s")
+    @GetMapping("/getShips")
     @CrossOrigin
     public String getShips(String companyId) throws SQLException {
         Datenbank db = new Datenbank();
