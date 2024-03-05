@@ -15,24 +15,11 @@ public class DemoApplication {
 	public static void main(String[] args) throws SQLException, InterruptedException {
 		SpringApplication.run(DemoApplication.class, args);
 
-		File htmlFile = new File("src\\main\\resources\\s.html");
-		if (htmlFile.exists()) {
-			System.out.println("File exists");
-		} else {
-			System.out.println("File does not exist");
-		}
-		try {
-			// open the default web browser for this HTML file
-			new Company("test123").instantiate();
-			// Desktop.getDesktop().browse(htmlFile.toURI());
-		} catch (Exception e) {
-			// Log an error message if the file can't be opened
-			System.out.println("An error occurred while trying to open the HTML file: " + e.getMessage());
-		}
+		
+		new Company("test1s23").instantiate();
+	
 		System.out.println("New Company instance!");
 
-		// Company company = new Company("test123");
-		// company.getShips("dsda");
 	}
 
 }

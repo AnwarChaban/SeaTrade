@@ -26,9 +26,12 @@ public class Ship {
         new Thread(toSeaTrade).run();
         
         try {
-       String[] tokens = registerShip(harbour).split(":");
-            // Position pos = Position.parse(tokens[1]);
-            System.out.println(Arrays.toString(tokens));
+            toSeaTrade.send(String.format("launch:%s:%s:%s", this.company, harbour, this.name));
+        
+            getCargoList();
+    //    String[] tokens = registerShip(harbour).split(":");
+    //         // Position pos = Position.parse(tokens[1]);
+    //         System.out.println(Arrays.toString(tokens));
             // setRadar();
             return this;
            // client.stop();
@@ -38,7 +41,7 @@ public class Ship {
         return null;
     }
     
-    private String registerShip(String harbour) throws IOException {
+    String registerShip(String harbour) throws IOException  {
         toSeaTrade.send(String.format("launch:%s:%s:%s", this.company, harbour, this.name));
         db = new Datenbank();
         this.id = genarateId();

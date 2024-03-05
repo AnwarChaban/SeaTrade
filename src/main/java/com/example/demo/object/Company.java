@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
 
+ // Anwar chaban
 public class Company {
     String name;
     private String id;
@@ -36,15 +37,16 @@ public class Company {
             setHarbour(seaTrade);
             setCargo(seaTrade);
             
-            instantiateShip("ship1");
-            seaTrade.stop();
             db.close();
+            seaTrade.stop();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     private void setHarbour(Client seaTrade) throws IOException, SQLException, InterruptedException {
+        db.clearTable("Ladungen");
+        db.clearTable("hafen");
         String harbourName = "";
         seaTrade.send("getinfo:harbour");
         while (!harbourName.equals("endinfo")) {
@@ -56,14 +58,15 @@ public class Company {
             System.out.println("Server: " + harbourName);
         }
     }
-
+    // Anwar chaban
     private void setCargo(Client seaTrade) throws IOException, SQLException, InterruptedException {
         // to avoid duplicate values from previous tries
+        // db.clearTable("Ladungen");
         String cargoName = "";
-        db.clearTable("Ladungen");
         seaTrade.send("getinfo:cargo");
         while (!cargoName.equals("endinfo")) {
             cargoName = seaTrade.receive();
+            if (!cargoName.equals("endinfo")) {
             Cargo cargo = Cargo.parse(cargoName.split(":")[1]);
             // everytime the cargo string is parsed
             // ... the id of the cargo gets randommised
@@ -71,27 +74,17 @@ public class Company {
                         cargo.getValue(), 
                         true,
                         cargo.getSource(),
-                        cargo.getDestination());
-
-            cargoName = seaTrade.receive();
+                    cargo.getDestination());
         }
+            System.out.println("Server: " + cargoName);}
     }
     
-    public void addShip(String shipName) {
-        instantiateShip(shipName);
-    }
 
     public Ship getShips(String companyName) throws SQLException {
         db = new Datenbank();
         db.getCompanys();
         return null;
     }
-
-    private void instantiateShip(String shipName) {
-        Ship ship = new Ship(shipName, this.name).instantiate("plymouth");
-        shipList.add(ship);
-    }
-
 
     private String genarateId() {
         UUID uuid = UUID.randomUUID();

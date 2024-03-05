@@ -102,7 +102,10 @@ public class Datenbank {
             output.append("").append(id)
                     .append(",").append(companyName)
                     .append(",").append(guthaben)
-                    .append("\n");
+                    .append(";");
+        }
+        if (output.length() > 0) {
+            output.deleteCharAt(output.length() - 1);
         }
         return output.toString();
     }
@@ -130,20 +133,29 @@ public class Datenbank {
         return output.toString();
     }
 
-    public void getShips(String companyID) throws SQLException {
+
+    public String getShips(String companyID) throws SQLException {
         String shipsQuery = "SELECT * FROM schiffe WHERE CompanyID = ?";
         PreparedStatement statement = connection.prepareStatement(shipsQuery);
         statement.setString(1, companyID);
         ResultSet result = statement.executeQuery();
 
+        StringBuilder output = new StringBuilder();
+
         while (result.next()) {
             String id = result.getString("id");
             String shipName = result.getString("shipname");
-            String company = result.getString("CompanyID");
+            // String company = result.getString("CompanyID");
             String hafenName = result.getString("hafenname");
 
-            System.out.println(
-                    "ID: " + id + ", Ship Name: " + shipName + ", Company ID: " + company + ", Cargo: " + hafenName);
+            output.append("").append(id)
+                    .append(",").append(shipName)
+                    .append(",").append(hafenName)
+                    .append(";");
         }
+        if (output.length() > 0) {
+            output.deleteCharAt(output.length() - 1);
+        }
+        return output.toString();
     }
 }
