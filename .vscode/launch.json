@@ -2,9 +2,16 @@
     "configurations": [
         {
             "type": "java",
+            "name": "SeatradeApplication",
+            "request": "launch",
+            "mainClass": "Seatrade.SeatradeApplication",
+            "projectName": "Seatrade"
+        },
+        {
+            "type": "java",
             "name": "DemoApplication",
             "request": "launch",
-            "mainClass": "com.example.demo.DemoApplication",
+            "mainClass": "Seatrade.DemoApplication",
             "projectName": "demo"
         },
         {
