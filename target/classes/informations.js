@@ -15,7 +15,7 @@ function getCompany() {
                 let itemArray = item.split(','); 
                 let tr = document.createElement('tr');
 
-                itemArray.forEach((subItem)  => {
+                itemArray.forEach((subItem, index)  => {
                     let td = document.createElement('td');
                     td.innerText = subItem; 
                     tr.appendChild(td);
@@ -23,6 +23,8 @@ function getCompany() {
 
                 tbody.appendChild(tr);
             });
+
+            console.log(data);
         })
         .catch(error => console.error(error));
 }
@@ -38,7 +40,7 @@ function getCompany() {
                 let itemArray = item.split(','); 
                 let tr = document.createElement('tr');
 
-                itemArray.forEach((subItem)  => {
+                itemArray.forEach((subItem, index)  => {
                     let td = document.createElement('td');
                     td.innerText = subItem; 
                     tr.appendChild(td);
@@ -46,6 +48,8 @@ function getCompany() {
 
                 tbody.appendChild(tr);
             });
+
+            console.log(data);
         })
         .catch(error => console.error(error));
 }
