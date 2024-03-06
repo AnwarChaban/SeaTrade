@@ -5,10 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.mysql.cj.jdbc.result.ResultSetMetaData;
-
-import com.mysql.cj.jdbc.*;
-
+// gemeinsam gemacht 
 public class Datenbank {
     private Connection connection;
 
@@ -20,7 +17,7 @@ public class Datenbank {
         connection.close();
     }
 
-
+    // Anwar hat die die Methode erstellt
     public void setCompany(String compnayId, String companyName, String deposit) throws SQLException {
         String insertQuery = "INSERT IGNORE INTO Company (ID,CompanyName,Guthaben) VALUES (?, ?, ?)";
         PreparedStatement statement = connection.prepareStatement(insertQuery);
@@ -33,13 +30,7 @@ public class Datenbank {
         }
     }
 
-    public void clearTable(String table) throws SQLException {
-        String insertStatement = "DELETE FROM " + table;
-        PreparedStatement statement = connection.prepareStatement(insertStatement);
-
-        statement.executeUpdate();
-    }
-
+    // Anwar hat die die Methode erstellt
     public void setShip(String shipId, String shipName, String companyID, String haborName) throws SQLException {
         String insertQuery = "INSERT IGNORE INTO Schiffe (ID, SchiffName, CompanyID, HafenName) VALUES (?, ?, ?, ?)";
         PreparedStatement statement = connection.prepareStatement(insertQuery);
@@ -53,6 +44,7 @@ public class Datenbank {
         }
     }
 
+    // Anwar hat die die Methode erstellt
     public void setHabor(String haborName, String position) throws SQLException {
         String insertQuery = "INSERT IGNORE INTO Hafen (HafenName, Koordinaten) VALUES (?, ?)";
         PreparedStatement statement = connection.prepareStatement(insertQuery);
@@ -64,6 +56,7 @@ public class Datenbank {
         }
     }
 
+    // Anwar hat die die Methode erstellt
     public void setCargo(String cargoId, int value, boolean IsAvailable, String source, String destination)
             throws SQLException {
         String insertQuery = "INSERT IGNORE INTO Ladungen (ID, Wert, IsAvailable, StartHafen, ZielHafen) VALUES (?, ?, ?, ?, ?)";
@@ -79,6 +72,7 @@ public class Datenbank {
         }
     }
 
+    // Miro hat die die Methode erstellt
     public void removeCargo(String id) throws SQLException {
         String query = "DELETE FROM Ladungen WHERE ID = ?";
         PreparedStatement statement = connection.prepareStatement(query);
@@ -87,29 +81,23 @@ public class Datenbank {
         statement.executeUpdate();
     }
 
-    public String getCompanys() throws SQLException {
-        String shipsQuery = "SELECT * FROM Company";
-        PreparedStatement statement = connection.prepareStatement(shipsQuery);
-        ResultSet result = statement.executeQuery();
+       // Anwar hat die die Methode erstellt
+       public void clearTable(String table) throws SQLException {
+        foreignKeyCheck(0);
+        String insertStatement = "TRUNCATE " + table;
+        PreparedStatement statement = connection.prepareStatement(insertStatement);
 
-        StringBuilder output = new StringBuilder();
+        statement.executeUpdate();
+        foreignKeyCheck(1);
+    }    
 
-        while (result.next()) {
-            String id = result.getString("id");
-            String companyName = result.getString("companyname");
-            int guthaben = result.getInt("guthaben");
-
-            output.append("").append(id)
-                    .append(",").append(companyName)
-                    .append(",").append(guthaben)
-                    .append(";");
-        }
-        if (output.length() > 0) {
-            output.deleteCharAt(output.length() - 1);
-        }
-        return output.toString();
+    private void foreignKeyCheck(int number) throws SQLException {
+        String insertStatement = "SET FOREIGN_KEY_CHECKS=" + number;
+        PreparedStatement statement = connection.prepareStatement(insertStatement);
+        statement.executeUpdate();
     }
 
+    // Miro hat die die Methode erstellt
     public String getCargos() throws SQLException {
         String shipsQuery = "SELECT * FROM Ladungen WHERE IsAvailable=1";
         PreparedStatement statement = connection.prepareStatement(shipsQuery);
@@ -133,20 +121,41 @@ public class Datenbank {
         return output.toString();
     }
 
-
-    public String getShips(String companyID) throws SQLException {
-        String shipsQuery = "SELECT * FROM schiffe WHERE CompanyID = ?";
+     // Miro hat die die Methode erstellt
+     public String getCompanys() throws SQLException {
+        String shipsQuery = "SELECT * FROM Company";
         PreparedStatement statement = connection.prepareStatement(shipsQuery);
-        statement.setString(1, companyID);
         ResultSet result = statement.executeQuery();
 
         StringBuilder output = new StringBuilder();
 
         while (result.next()) {
             String id = result.getString("id");
-            String shipName = result.getString("shipname");
-            // String company = result.getString("CompanyID");
-            String hafenName = result.getString("hafenname");
+            String companyName = result.getString("companyname");
+            int guthaben = result.getInt("guthaben");
+
+            output.append("").append(id)
+                    .append(",").append(companyName)
+                    .append(",").append(guthaben)
+                    .append(";");
+        }
+        if (output.length() > 0) {
+            output.deleteCharAt(output.length() - 1);
+        }
+        return output.toString();
+    }
+
+    // Miro hat die die Methode erstellt
+    public String getShips() throws SQLException {
+        String shipsQuery = "SELECT * FROM schiffe";
+        PreparedStatement statement = connection.prepareStatement(shipsQuery);
+        ResultSet result = statement.executeQuery();
+        StringBuilder output = new StringBuilder();
+
+        while (result.next()) {
+            String id = result.getString("id");
+            String shipName = result.getString("schiffName");
+            String hafenName = result.getString("hafenName");
 
             output.append("").append(id)
                     .append(",").append(shipName)

@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+// Miro hat die Klasse erstellt 
 public class SqlConnection {
     private String url = "jdbc:mysql://localhost:3306/seatrade";
     private String username = "root";

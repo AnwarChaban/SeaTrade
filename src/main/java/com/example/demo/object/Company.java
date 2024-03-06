@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
 
- // Anwar chaban
+ // Anwar hat die Klasse gemacht 
 public class Company {
     String name;
     private String id;
@@ -45,8 +45,9 @@ public class Company {
     }
 
     private void setHarbour(Client seaTrade) throws IOException, SQLException, InterruptedException {
-        db.clearTable("Ladungen");
+        // db.executeStatement("SET FOREIGN_KEY_CHECKS=0;");
         db.clearTable("hafen");
+        db.clearTable("Ladungen");
         String harbourName = "";
         seaTrade.send("getinfo:harbour");
         while (!harbourName.equals("endinfo")) {
@@ -90,4 +91,5 @@ public class Company {
         UUID uuid = UUID.randomUUID();
         return uuid.toString();
     }
+    
 }

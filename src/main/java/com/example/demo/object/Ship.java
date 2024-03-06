@@ -8,6 +8,8 @@ import java.util.UUID;
 
 import com.example.demo.sea.*;
 
+// Ali hat die Klasse gemacht
+
 public class Ship {
     String name;
     String company;

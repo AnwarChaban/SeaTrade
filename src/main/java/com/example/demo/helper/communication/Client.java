@@ -2,7 +2,8 @@ package com.example.demo.helper.communication;
 
 import java.io.*;
 import java.net.*;
- 
+
+// Ali hat die Klasse gemacht
 public class Client implements Runnable {
     private int port;
     private String ip;

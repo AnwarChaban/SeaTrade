@@ -3,6 +3,7 @@ package com.example.demo.helper.communication;
 import java.io.*;
 import java.net.*;
 
+// Ali hat die Klasse gemacht
 class Server implements Runnable {
     private int port;
 

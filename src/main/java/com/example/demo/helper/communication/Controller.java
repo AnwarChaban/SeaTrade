@@ -1,18 +1,16 @@
 package com.example.demo.helper.communication;
 
 import java.sql.SQLException;
-
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-// import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PostMapping;
-
 import com.example.demo.object.Company;
 import com.example.demo.object.Datenbank;
 
+
+// Anwar hat die Klasse gemacht
 @RestController
 public class Controller {
 
@@ -39,10 +37,9 @@ public class Controller {
     @GetMapping("/getShips")
     @CrossOrigin
     @ResponseBody
-    public String getShips(@RequestParam String companyId) throws SQLException, InterruptedException {
+    public String getShips() throws SQLException, InterruptedException {
 
         Datenbank db = new Datenbank();
-        return db.getShips(companyId);
+        return db.getShips();
     }
-
 }
