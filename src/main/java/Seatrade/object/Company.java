@@ -8,40 +8,58 @@ import java.sql.SQLException;
 import java.util.*;
 
  // Anwar hat die Klasse gemacht 
-public class Company {
+ public class Company {
     String name;
     private String id;
-    private int deposit;
+    private String deposit;
     private Datenbank db;
-    ArrayList<Ship> shipList = new ArrayList<Ship>();
 
     public Company(String name) {
         this.name = name;
+        this.id = genarateId();
+        this.db = new Datenbank();
     }
 
-    public void instantiate() throws SQLException, InterruptedException {
+    public void instantiate() throws IOException, SQLException, InterruptedException {
         // connect to seaTrade server
         Client seaTrade = new Client(8150, "localhost");
-        db = new Datenbank();
         new Thread(seaTrade).run();
-        
+    
+        String registerMessage = String.format("register:%s", this.name);
+        seaTrade.send(registerMessage);
+        this.deposit = seaTrade.receive().split(":")[2];
 
-        try {
-            seaTrade.send(String.format("register:%s", this.name));
-            String deposit = seaTrade.receive();
-            String deposits[] = deposit.split(":");
-            this.id = genarateId();
-            this.deposit = Integer.parseInt(deposits[2]); // Convert string to int
-            db.setCompany(this.id, this.name, Integer.toString(this.deposit));
+        setupDb(seaTrade);
+        buyShips();
+    }
+    
+    private void buyShips() throws IOException, SQLException, InterruptedException {
+        int shipCost = 2000000;
+        int i = 1;
+        while (true) {
+            int companyDeposit = Integer.parseInt(db.getCompanyDeposit(this.name));
+            if (companyDeposit >= shipCost) {
+                int newDeposit = companyDeposit - shipCost;
+                // turn the number negative to subtract it from the deposit
+                db.updateCompanyMoney(this.name, newDeposit);
 
-            setHarbour(seaTrade);
-            setCargo(seaTrade);
-            
-            db.close();
-            seaTrade.stop();
-        } catch (IOException e) {
-            e.printStackTrace();
+                String shipName = "ship-" + i;
+                String shipId = genarateId();
+                new Ship(shipName, this.name).instantiate(shipId);
+                Thread.sleep(30000); // wait 30 seconds until buying the next Ship
+            }
         }
+    }
+
+    private void setupDb(Client seaTrade) throws IOException, SQLException, InterruptedException {
+        setCompany();
+        setHarbour(seaTrade);
+        setCargo(seaTrade);
+    }
+
+    private void setCompany() throws SQLException {
+        db.clearTable("Company");
+        db.setCompany(this.id, this.name, this.deposit);
     }
 
     private void setHarbour(Client seaTrade) throws IOException, SQLException, InterruptedException {
@@ -80,12 +98,6 @@ public class Company {
             System.out.println("Server: " + cargoName);}
     }
     
-
-    public Ship getShips(String companyName) throws SQLException {
-        db = new Datenbank();
-        db.getCompanys();
-        return null;
-    }
 
     private String genarateId() {
         UUID uuid = UUID.randomUUID();

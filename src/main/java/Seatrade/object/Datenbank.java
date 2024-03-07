@@ -31,15 +31,14 @@ public class Datenbank {
     }
 
     // Anwar hat die die Methode erstellt
-    public void setShip(String shipId, String shipName, String companyID, String haborName) throws SQLException {
-        String insertQuery = "INSERT IGNORE INTO Schiffe (ID, SchiffName, CompanyID, HafenName) VALUES (?, ?, ?, ?)";
+    public void setShip(String shipId, String shipName, String companyID) throws SQLException {
+        String insertQuery = "INSERT IGNORE INTO Schiffe (ID, SchiffName, CompanyID) VALUES (?, ?, ?)";
         PreparedStatement statement = connection.prepareStatement(insertQuery);
 
         if (!shipId.equals("null")) {
             statement.setString(1, shipId);
             statement.setString(2, shipName);
             statement.setString(3, companyID);
-            statement.setString(4, haborName);
             statement.executeUpdate();
         }
     }
@@ -71,8 +70,36 @@ public class Datenbank {
             statement.executeUpdate();
         }
     }
+    // Ali hat die die Methode erstellt
+    public String getRandomHarbour() throws SQLException {
+        String query = "SELECT HafenName FROM Hafen ORDER BY RAND() LIMIT 1";
+        PreparedStatement statement = connection.prepareStatement(query);
+        ResultSet result = statement.executeQuery();
+        StringBuilder output = new StringBuilder();
 
-    // Miro hat die die Methode erstellt
+        while (result.next()) {
+            output.append(result.getString("HafenName"));
+        }
+
+        return output.toString();
+    }
+    
+    // Ali hat die die Methode erstellt
+    public String getCompanyDeposit(String companyName) throws SQLException {
+        String query = "SELECT Guthaben FROM Company WHERE companyName = ?";
+        PreparedStatement statement = connection.prepareStatement(query);
+        statement.setString(1, companyName);
+        ResultSet result = statement.executeQuery();
+        StringBuilder output = new StringBuilder();
+
+        while (result.next()) {
+            output.append(result.getString("Guthaben"));
+        }
+        
+        return output.toString();
+    }
+
+    // Ali hat die die Methode erstellt
     public void removeCargo(String id) throws SQLException {
         String query = "DELETE FROM Ladungen WHERE ID = ?";
         PreparedStatement statement = connection.prepareStatement(query);
@@ -80,6 +107,39 @@ public class Datenbank {
         statement.setString(1, id);
         statement.executeUpdate();
     }
+    
+    // Ali hat die die Methode erstellt
+    public String getCargo() throws SQLException {
+        String shipsQuery = "SELECT * FROM Ladungen WHERE IsAvailable=1 LIMIT 1";
+        PreparedStatement statement = connection.prepareStatement(shipsQuery);
+        ResultSet result = statement.executeQuery();
+
+        StringBuilder output = new StringBuilder();
+
+        while (result.next()) {
+            String id = result.getString("ID");
+            String wert = result.getString("Wert");
+            String start = result.getString("Starthafen");
+            String ziel = result.getString("Zielhafen");
+
+            output.append("CARGO").append("|").append(id)
+                  .append("|").append(start)
+                  .append("|").append(ziel)
+                  .append("|").append(wert)
+                  .append("\n");
+        }
+        return output.toString();
+    }
+
+    // Anwar hat die die Methode erstellt
+    public void updateCompanyMoney(String companyName, int money) throws SQLException {
+        String query = "UPDATE Company SET Guthaben = ? WHERE CompanyName = ?";
+        PreparedStatement statement = connection.prepareStatement(query);
+        
+        statement.setInt(1, money);
+        statement.setString(2, companyName);
+        statement.executeUpdate();
+    } 
 
        // Anwar hat die die Methode erstellt
        public void clearTable(String table) throws SQLException {
