@@ -20,44 +20,46 @@ public class Company {
         this.db = new Datenbank();
     }
 
-    public void instantiate() throws SQLException {
+    public void instantiate() throws IOException, SQLException, InterruptedException {
         // connect to seaTrade server
         Client seaTrade = new Client(8150, "localhost");
-        new Thread(seaTrade).start();
-        
-        try {
-            seaTrade.send(String.format("register:%s", this.name));
-            this.deposit = seaTrade.receive().split(":")[2];
+        new Thread(seaTrade).run();
+    
+        String registerMessage = String.format("register:%s", this.name);
+        seaTrade.send(registerMessage);
+        this.deposit = seaTrade.receive().split(":")[2];
 
-            setupDb(seaTrade);
-            buyShips();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            seaTrade.stop();
-            e.printStackTrace();
-        }
+        setupDb(seaTrade);
+        buyShips();
     }
     
-    private void buyShips() {
-        int shipCost = 1000;
+    private void buyShips() throws IOException, SQLException, InterruptedException {
+        int shipCost = 2000000;
         int i = 1;
         while (true) {
             int companyDeposit = Integer.parseInt(db.getCompanyDeposit(this.name));
             if (companyDeposit >= shipCost) {
+                int newDeposit = companyDeposit - shipCost;
                 // turn the number negative to subtract it from the deposit
-                db.updateCompanyMoney(this.name, (shipCost * -1));
+                db.updateCompanyMoney(this.name, newDeposit);
 
+                String shipName = "ship-" + i;
                 String shipId = genarateId();
                 new Ship(shipName, this.name).instantiate(shipId);
+                Thread.sleep(30000); // wait 30 seconds until buying the next Ship
             }
         }
     }
 
-    private void setupDb(Client seaTrade) throws SQLException {
-        db.setCompany(this.id, this.name, this.deposit);
+    private void setupDb(Client seaTrade) throws IOException, SQLException, InterruptedException {
+        setCompany();
         setHarbour(seaTrade);
         setCargo(seaTrade);
+    }
+
+    private void setCompany() throws SQLException {
+        db.clearTable("Company");
+        db.setCompany(this.id, this.name, this.deposit);
     }
 
     private void setHarbour(Client seaTrade) throws IOException, SQLException, InterruptedException {

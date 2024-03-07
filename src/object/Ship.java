@@ -19,23 +19,27 @@ public class Ship {
         this.db = new Datenbank();
     }
 
-    public void instantiate() throws IOException {
+    public void instantiate(String shipId) throws IOException, SQLException {
         Thread ship = new Thread() {
             public void run() {
-                Ship.this.connectToSeaTrade();
-                Ship.this.registerShip();
+                try {
+                    Ship.this.connectToSeaTrade();
+                    Ship.this.registerShip(shipId);
 
-                String cargo = Ship.this.db.getCargo();
-                while (!cargo.equals("")) {
-                    Ship.this.handleCargo(cargo);
-                    cargo = Ship.this.db.getCargo();
+                    String cargo = Ship.this.db.getCargo();
+                    while (!cargo.equals("")) {
+                        Ship.this.handleCargo(cargo);
+                        cargo = Ship.this.db.getCargo();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         };
         ship.start();
     }
 
-    private void connectToSeaTrade() {
+    private void connectToSeaTrade() throws IOException {
         this.toSeaTrade = new Client(8151, "localhost");
         new Thread(this.toSeaTrade).start();
     }
@@ -43,11 +47,9 @@ public class Ship {
     /* 
      * save the Ship in the DB and register it at the seaTrade server
      */
-    private void registerShip() throws IOException {
-        String shipId = genarateId();
+    private void registerShip(String shipId) throws IOException, SQLException {
         String startHarbour = db.getRandomHarbour();
-
-        this.db.setShip(shipId, this.name, this.company, startHarbour);
+        this.db.setShip(shipId, this.name, this.company);
         this.toSeaTrade.send(String.format("launch:%s:%s:%s", Ship.this.company, startHarbour, Ship.this.name));
     }
 
@@ -55,33 +57,32 @@ public class Ship {
      * load the cargo from the source harbour,
      * ... deliver it to the destination and collect the fee
      */
-    private void handleCargo(String firstCargo) throws IOException {
-        Cargo cargo = Cargo.parse(firstCargo);
-
+    private void handleCargo(String firstCargo) throws IOException, SQLException {
         /* 
          * everytime the Cargo string gets parsed
          * it generates a new random id for the cargo 
          * ... but we need the actual id to collect the cargo
          */
         String cargoId = firstCargo.split("\\|")[1];
+        Cargo cargo = Cargo.parse(firstCargo);
         
         /*  
          *  set cargo as not avaiable inside the DB
          *  ... so other Ships won't drive there 
          *  ... because the cargo would already be gone 
          */
-        this.db.setCargo(
+        db.setCargo(
             cargoId,
             cargo.getValue(),
             false,
             cargo.getSource(),
             cargo.getDestination()
         );
-        
+
         processCargo(cargoId, cargo);
     }
 
-    private void processCargo(String cargoId, Cargo cargo) throws IOException {
+    private void processCargo(String cargoId, Cargo cargo) throws IOException, SQLException {
         moveToSourceAndLoadCargo(cargoId, cargo);
         moveToDestinationAndUnloadCargo(cargo);
         collectFee(cargo);
@@ -99,9 +100,12 @@ public class Ship {
         this.toSeaTrade.send("unloadcargo");
     }
 
-    private void collectFee(Cargo cargo) throws IOException {
+    private void collectFee(Cargo cargo) throws IOException, SQLException {
         String cargoFee = toSeaTrade.receive().split(":")[1];
-        this.db.updateCompanyMoney(this.company, Integer.parseInt(cargoFee));
+        String companyDeposit = db.getCompanyDeposit(this.company);
+        int newDeposit = Integer.parseInt(companyDeposit) + Integer.parseInt(cargoFee);
+
+        this.db.updateCompanyMoney(this.company, newDeposit);
     }
 
     private void waitForArrival() throws IOException {

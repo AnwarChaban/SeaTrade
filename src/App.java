@@ -6,7 +6,7 @@ public class App {
     public static void main(String[] args) throws Exception {
         try {
             new Company("company").instantiate();
-        } catch (SQLException e) {
+        } catch (Exception e) {
            e.printStackTrace();
         }
     }

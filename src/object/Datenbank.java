@@ -44,16 +44,14 @@ public class Datenbank {
         statement.executeUpdate();
     }
     
-    public void setShip(String shipId, String shipName, String companyID, String haborName) throws SQLException {
-        String insertQuery = "INSERT IGNORE INTO Schiffe (ID, SchiffName, CompanyID, HafenName) VALUES (?, ?, ?, ?)";
+    public void setShip(String shipId, String shipName, String companyID) throws SQLException {
+        String insertQuery = "INSERT IGNORE INTO Schiffe (ID, SchiffName, CompanyID) VALUES (?, ?, ?)";
         PreparedStatement statement = connection.prepareStatement(insertQuery);
 
-        System.out.println("ID length: " + shipId.length());
         if (!shipId.equals("null")) {
             statement.setString(1, shipId);
             statement.setString(2, shipName);
             statement.setString(3, companyID);
-            statement.setString(4, haborName);
             statement.executeUpdate();
         }
     }

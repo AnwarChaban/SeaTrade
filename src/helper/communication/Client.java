@@ -18,15 +18,15 @@ public class Client implements Runnable {
     }
 
     @Override
-    public void run() {
+    public void run() throws NullPointerException {
         try {
             // Connect to the server
             socket = new Socket(ip, port);
-            System.out.println("Connected to server.");
-
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(), true);
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
             e.printStackTrace();
         }
     }
@@ -36,7 +36,9 @@ public class Client implements Runnable {
     }
 
     public void send(String message) throws IOException {
-        out.println(message);
+        if (!message.equals("")) {
+            out.println(message);
+        }
     }
 
     public String receive() throws IOException {
