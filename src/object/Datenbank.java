@@ -140,8 +140,17 @@ public class Datenbank {
         return output.toString();
     }
 
-     public String getCargos() throws SQLException {
-        String shipsQuery = "SELECT * FROM Ladungen WHERE isAvailablle=1";
+    public void updateCompanyMoney(String companyName, int money) throws SQLException {
+        String query = "UPDATE Company SET Guthaben = ? WHERE CompanyName = ?";
+        PreparedStatement statement = connection.prepareStatement(query);
+        
+        statement.setInt(1, money);
+        statement.setString(2, companyName);
+        statement.executeUpdate();
+    } 
+
+    public String getCargo() throws SQLException {
+        String shipsQuery = "SELECT * FROM Ladungen WHERE isAvailablle=1 LIMIT 1";
         PreparedStatement statement = connection.prepareStatement(shipsQuery);
         ResultSet result = statement.executeQuery();
 
@@ -159,7 +168,6 @@ public class Datenbank {
                   .append("|").append(wert)
                   .append("\n");
         }
-        // System.out.println(output.toString());
         return output.toString();
     }
 
