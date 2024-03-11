@@ -9,14 +9,16 @@ import sea.*;
 // Author: Ali Al-Wazny
 public class Ship {
     String name;
-    String company;
+    String companyName;
+    String companyId;
     Client toSeaTrade;
     Datenbank db;
 
-    public Ship(String name, String company) {
+    public Ship(String name, String companyName, String companyId) {
         this.name = name;
-        this.company = company;
-        this.db = new Datenbank();
+        this.companyName = companyName;
+        this.companyId = companyId;
+        this.db = Datenbank.getInstance();
     }
 
     public void instantiate(String shipId) throws IOException, SQLException {
@@ -49,8 +51,8 @@ public class Ship {
      */
     private void registerShip(String shipId) throws IOException, SQLException {
         String startHarbour = db.getRandomHarbour();
-        this.db.setShip(shipId, this.name, this.company);
-        this.toSeaTrade.send(String.format("launch:%s:%s:%s", Ship.this.company, startHarbour, Ship.this.name));
+        this.db.setShip(shipId, this.name, this.companyId);
+        this.toSeaTrade.send(String.format("launch:%s:%s:%s", Ship.this.companyName, startHarbour, Ship.this.name));
     }
 
     /*
@@ -66,46 +68,40 @@ public class Ship {
         String cargoId = firstCargo.split("\\|")[1];
         Cargo cargo = Cargo.parse(firstCargo);
         
-        /*  
-         *  set cargo as not avaiable inside the DB
-         *  ... so other Ships won't drive there 
-         *  ... because the cargo would already be gone 
-         */
-        db.setCargo(
-            cargoId,
-            cargo.getValue(),
-            false,
-            cargo.getSource(),
-            cargo.getDestination()
-        );
-
         processCargo(cargoId, cargo);
     }
 
     private void processCargo(String cargoId, Cargo cargo) throws IOException, SQLException {
         moveToSourceAndLoadCargo(cargoId, cargo);
-        moveToDestinationAndUnloadCargo(cargo);
+        moveToDestinationAndUnloadCargo(cargoId, cargo);
         collectFee(cargo);
     }
-    
-    private void moveToSourceAndLoadCargo(String cargoId, Cargo cargo) throws IOException {
+ 
+    /*  
+     *  set cargo as not avaiable inside the DB
+     *  ... so other Ships won't drive there 
+     *  ... because the cargo would already be gone 
+     */
+    private void moveToSourceAndLoadCargo(String cargoId, Cargo cargo) throws IOException, SQLException {
+        this.db.reserveCargo(cargoId);
         this.toSeaTrade.send("moveto:" + cargo.getSource());
         waitForArrival();
         this.toSeaTrade.send("loadcargo:" + cargoId);
     }
     
-    private void moveToDestinationAndUnloadCargo(Cargo cargo) throws IOException {
+    private void moveToDestinationAndUnloadCargo(String cargoId, Cargo cargo) throws IOException, SQLException {
         this.toSeaTrade.send("moveto:" + cargo.getDestination());
         waitForArrival();
         this.toSeaTrade.send("unloadcargo");
+        this.db.removeCargo(cargoId);
     }
 
     private void collectFee(Cargo cargo) throws IOException, SQLException {
         String cargoFee = toSeaTrade.receive().split(":")[1];
-        String companyDeposit = db.getCompanyDeposit(this.company);
+        String companyDeposit = db.getCompanyDeposit(this.companyId);
         int newDeposit = Integer.parseInt(companyDeposit) + Integer.parseInt(cargoFee);
 
-        this.db.updateCompanyMoney(this.company, newDeposit);
+        this.db.updateCompanyMoney(this.companyName, newDeposit);
     }
 
     private void waitForArrival() throws IOException {

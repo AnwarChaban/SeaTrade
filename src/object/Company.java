@@ -17,7 +17,7 @@ public class Company {
     public Company(String name) {
         this.name = name;
         this.id = genarateId();
-        this.db = new Datenbank();
+        this.db = Datenbank.getInstance();
     }
 
     public void instantiate() throws IOException, SQLException, InterruptedException {
@@ -37,24 +37,28 @@ public class Company {
         int shipCost = 2000000;
         int i = 1;
         while (true) {
-            int companyDeposit = Integer.parseInt(db.getCompanyDeposit(this.name));
+            int companyDeposit = Integer.parseInt(db.getCompanyDeposit(this.id));
             if (companyDeposit >= shipCost) {
-                int newDeposit = companyDeposit - shipCost;
-                // turn the number negative to subtract it from the deposit
-                db.updateCompanyMoney(this.name, newDeposit);
-
-                String shipName = "ship-" + i;
+                String shipName = "ship-" + i++;
                 String shipId = genarateId();
-                new Ship(shipName, this.name).instantiate(shipId);
-                Thread.sleep(30000); // wait 30 seconds until buying the next Ship
+                int newDeposit = companyDeposit - shipCost;
+                
+                buyShip(shipName, shipId, newDeposit);
             }
         }
     }
 
     private void setupDb(Client seaTrade) throws IOException, SQLException, InterruptedException {
+        this.db.clearTable("Schiffe");
         setCompany();
         setHarbour(seaTrade);
         setCargo(seaTrade);
+    }
+
+    private void buyShip(String shipName, String shipId, int newDeposit) throws SQLException, IOException, InterruptedException {
+        db.updateCompanyMoney(this.name, newDeposit);
+        new Ship(shipName, this.name, this.id).instantiate(shipId);
+        Thread.sleep(30000); // 30 seconds
     }
 
     private void setCompany() throws SQLException {

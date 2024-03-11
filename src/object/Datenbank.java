@@ -9,20 +9,29 @@ import com.mysql.cj.jdbc.*;
 
 public class Datenbank {
     private Connection connection;
-    private String query;
+    private static Datenbank instance;
+    private static final Object lock = new Object();
 
-    public Datenbank() {
-        // TODO: Implement constructor
+    private Datenbank() {
         connection = new SqlConnection().getConnection();
     }
 
-    public void execQuery() {
-        // TODO: Implement execQuery method
-        //
+    public static Datenbank getInstance() {
+        if (instance == null) {
+            synchronized (lock) {
+                if (instance == null) {
+                    instance = new Datenbank();
+                }
+            }
+        }
+
+        return instance;
     }
 
-    public void execStatement() {
-        // TODO: Implement execStatement method
+    private void execUpdate(PreparedStatement stmt) throws SQLException {
+        synchronized (this) {
+            stmt.executeUpdate();
+        }
     }
 
     public void setCompany(String compnayId, String companyName, String deposit) throws SQLException {
@@ -33,7 +42,7 @@ public class Datenbank {
             statement.setString(1, compnayId);
             statement.setString(2, companyName);
             statement.setString(3, deposit);
-            statement.executeUpdate();
+            this.execUpdate(statement);
         }
     }
     
@@ -41,35 +50,35 @@ public class Datenbank {
         String insertStatement = "DELETE FROM " + table;
         PreparedStatement statement = connection.prepareStatement(insertStatement);
 
-        statement.executeUpdate();
+        this.execUpdate(statement);
     }
     
     public void setShip(String shipId, String shipName, String companyID) throws SQLException {
-        String insertQuery = "INSERT IGNORE INTO Schiffe (ID, SchiffName, CompanyID) VALUES (?, ?, ?)";
-        PreparedStatement statement = connection.prepareStatement(insertQuery);
+        synchronized (this) {
+            String insertQuery = "INSERT IGNORE INTO Schiffe (ID, SchiffName, CompanyID) VALUES (?, ?, ?)";
+            PreparedStatement statement = connection.prepareStatement(insertQuery);
 
-        if (!shipId.equals("null")) {
-            statement.setString(1, shipId);
-            statement.setString(2, shipName);
-            statement.setString(3, companyID);
-            statement.executeUpdate();
+            if (!shipId.equals("null")) {
+                statement.setString(1, shipId);
+                statement.setString(2, shipName);
+                statement.setString(3, companyID);
+                this.execUpdate(statement);
+            }
         }
-    }
+   }
 
     public void setHabor(String haborName, String position) throws SQLException {
         String insertQuery = "INSERT IGNORE INTO Hafen (HafenName, Koordinaten) VALUES (?, ?)";
         PreparedStatement statement = connection.prepareStatement(insertQuery);
             
-
         if (!haborName.equals("null")) {
            statement.setString(1, haborName);
             statement.setString(2, position);
-            statement.executeUpdate();
+            this.execUpdate(statement);
         }
     }
-
-    public void setCargo(String cargoId, int value, boolean IsAvailable, String source, String destination)
-            throws SQLException {
+    
+    public void setCargo(String cargoId, int value, boolean IsAvailable, String source, String destination) throws SQLException {
         String insertQuery = "INSERT IGNORE INTO Ladungen (ID, Wert, IsAvailablle, StartHafen, ZielHafen) VALUES (?, ?, ?, ?, ?)";
         PreparedStatement statement = connection.prepareStatement(insertQuery);
 
@@ -79,10 +88,26 @@ public class Datenbank {
             statement.setBoolean(3, IsAvailable);
             statement.setString(4, source);
             statement.setString(5, destination);
-            statement.executeUpdate();
+            this.execUpdate(statement);
         }
     }
-    
+ 
+    public void reserveCargo(String cargoId) throws SQLException {
+        String insertQuery = "UPDATE Ladungen SET IsAvailablle=0 WHERE ID=?";
+        PreparedStatement statement = connection.prepareStatement(insertQuery);
+
+        statement.setString(1, cargoId);
+        this.execUpdate(statement);
+    }
+
+    public void removeCargo(String id) throws SQLException {
+        String query = "DELETE FROM Ladungen WHERE ID = ?";
+        PreparedStatement statement = connection.prepareStatement(query);
+        
+        statement.setString(1, id);
+        this.execUpdate(statement);
+    }
+   
     public String getRandomHarbour() throws SQLException {
         String query = "SELECT HafenName FROM Hafen ORDER BY RAND() LIMIT 1";
         PreparedStatement statement = connection.prepareStatement(query);
@@ -97,7 +122,7 @@ public class Datenbank {
     }
 
     public String getCompanyDeposit(String companyName) throws SQLException {
-        String query = "SELECT Guthaben FROM Company WHERE companyName = ?";
+        String query = "SELECT Guthaben FROM Company WHERE ID = ?";
         PreparedStatement statement = connection.prepareStatement(query);
         statement.setString(1, companyName);
         ResultSet result = statement.executeQuery();
@@ -108,14 +133,6 @@ public class Datenbank {
         }
         
         return output.toString();
-    }
-
-    public void removeCargo(String id) throws SQLException {
-        String query = "DELETE FROM Ladungen WHERE ID = ?";
-        PreparedStatement statement = connection.prepareStatement(query);
-        
-        statement.setString(1, id);
-        statement.executeUpdate();
     }
 
     public String getCompanys() throws SQLException {
@@ -144,7 +161,7 @@ public class Datenbank {
         
         statement.setInt(1, money);
         statement.setString(2, companyName);
-        statement.executeUpdate();
+        this.execUpdate(statement);
     } 
 
     public String getCargo() throws SQLException {
